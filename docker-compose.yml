@@ -4,21 +4,30 @@ services:
     container_name: piwigo
     image: piwigo-docker
     networks:
-      - piwigo
+      - piwigo-nw
     ports:
-      - "8000:8000"
+      - "8185:8000"
 
-  mysql:
-    container_name: piwigo_mysql
-    image: mysql:8.0.18
-    command: ["--default-authentication-plugin=mysql_native_password"]
-    networks:
-      - piwigo
+  mariadb:
+    image: tobi312/rpi-mariadb:10.6-alpine
+    container_name: piwidb
+    env_file:
+      - stack.env
     environment:
-      MYSQL_USER: "piwigo"
-      MYSQL_PASSWORD: "piwigo"
-      MYSQL_DATABASE: "piwigo"
-      MYSQL_RANDOM_ROOT_PASSWORD: "true"
-
+      - PUID=1000   ##change to your user id. 
+      - PGID=1000   ##change to your user group ID. 
+      #- MARIADB_ROOT_PASSWORD=xxxx
+      - TZ=Europe/Berlin
+      - MARIADB_DATABASE=piwigo
+      - MARIADB_USER=piwigo
+      #- MARIADB_PASSWORD=yyyy
+    volumes:
+      - /var/lib/docker/volumes/piwigo-db/_data:/config
+    networks:
+      - piwigo-nw
+    ports:
+      - 3308:3306
+    restart: unless-stopped
+    
 networks:
-  piwigo:
+  piwigo-nw:
