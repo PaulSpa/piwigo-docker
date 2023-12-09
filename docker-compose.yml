@@ -2,6 +2,7 @@ version: '3'
 services:
   piwigo:
     container_name: piwigo
+    hostname: piwigo
     image: piwigo-docker
     networks:
       - piwigo-nw
@@ -11,6 +12,7 @@ services:
   mariadb:
     image: tobi312/rpi-mariadb:10.6-alpine
     container_name: piwidb
+    hostname: piwidb
     env_file:
       - stack.env
     environment:
